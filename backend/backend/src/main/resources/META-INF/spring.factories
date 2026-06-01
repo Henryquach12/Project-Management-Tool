@@ -1,0 +1,2 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  com.projet_managment.backend.config.FlyDatabaseEnvironmentPostProcessor
