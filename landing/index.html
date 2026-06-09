@@ -423,7 +423,7 @@
           <button class="toggle-pill active" role="tab" aria-selected="true" aria-controls="tab-existing" id="tab-btn-existing">Already use a PM tool</button>
           <button class="toggle-pill" role="tab" aria-selected="false" aria-controls="tab-new" id="tab-btn-new">New to project management</button>
         </div>
-        <div id="tab-existing" class="feature-grid active" role="tabpanel" aria-labelledby="tab-btn-existing" data-animate>
+        <div id="tab-existing" class="feature-grid active" role="tabpanel" aria-labelledby="tab-btn-existing">
           <div class="feat-card"><div class="feat-card-icon">🔄</div><h4>1-click migration</h4><p>Import from Jira, Asana or Trello in seconds. All data, comments and history preserved.</p></div>
           <div class="feat-card"><div class="feat-card-icon">⚡</div><h4>Faster workflows</h4><p>Automate the handoffs that used to require manual updates and Slack pings.</p></div>
           <div class="feat-card"><div class="feat-card-icon">📊</div><h4>Better insights</h4><p>Velocity, burndown and cycle time in one view — no spreadsheets required.</p></div>
@@ -431,7 +431,7 @@
           <div class="feat-card"><div class="feat-card-icon">👥</div><h4>Role-based access</h4><p>Developers, designers, clients and execs each see exactly what they need.</p></div>
           <div class="feat-card"><div class="feat-card-icon">🛡</div><h4>Enterprise security</h4><p>SOC 2 Type II, SSO, SAML 2.0, AES-256 encryption. Upgrade without the compliance headache.</p></div>
         </div>
-        <div id="tab-new" class="feature-grid" role="tabpanel" aria-labelledby="tab-btn-new" data-animate>
+        <div id="tab-new" class="feature-grid" role="tabpanel" aria-labelledby="tab-btn-new">
           <div class="feat-card"><div class="feat-card-icon">🚀</div><h4>Up in 10 minutes</h4><p>Pick a template, invite your team, and start tracking work in under 10 minutes. No training needed.</p></div>
           <div class="feat-card"><div class="feat-card-icon">📋</div><h4>Pre-built templates</h4><p>Sprint planning, product roadmap, bug tracker — 50+ templates ready to go.</p></div>
           <div class="feat-card"><div class="feat-card-icon">🤖</div><h4>AI task briefs</h4><p>Type one sentence. TaskFlow AI generates the full task description, checklist and owner suggestion.</p></div>
@@ -1066,7 +1066,7 @@
         btn.classList.add('active');
         btn.setAttribute('aria-selected', 'true');
         const target = document.getElementById(btn.getAttribute('aria-controls'));
-        if (target) target.classList.add('active');
+        if (target) { target.classList.add('active'); target.classList.add('is-visible'); }
       });
     });
 
@@ -1106,11 +1106,15 @@
             observer.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+      }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
       animatedEls.forEach(el => observer.observe(el));
     } else {
       animatedEls.forEach(el => el.classList.add('is-visible'));
     }
+    // Safety fallback: reveal any element still hidden after 1.2s (e.g. near-viewport on load)
+    setTimeout(() => {
+      document.querySelectorAll('[data-animate]:not(.is-visible)').forEach(el => el.classList.add('is-visible'));
+    }, 1200);
   </script>
 </body>
 </html>
