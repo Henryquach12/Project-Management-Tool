@@ -12,18 +12,23 @@ export default function RegisterPage() {
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [slowHint, setSlowHint] = useState(false)
 
   const onSubmit = async (data: FormData) => {
     setError('')
+    setSlowHint(false)
     setLoading(true)
+    const hintTimer = setTimeout(() => setSlowHint(true), 6000)
     try {
       const res = await authApi.register(data)
       login(res.data.token, res.data.user)
       navigate('/dashboard')
     } catch (e: any) {
-      setError(e.response?.data?.message ?? 'Registration failed')
+      setError(e.response?.data?.message ?? 'Registration failed — please try again')
     } finally {
+      clearTimeout(hintTimer)
       setLoading(false)
+      setSlowHint(false)
     }
   }
 
@@ -80,6 +85,11 @@ export default function RegisterPage() {
           >
             {loading ? 'Creating account…' : 'Create account'}
           </button>
+          {slowHint && (
+            <p className="text-center text-xs text-amber-600 mt-2">
+              Server is waking up — this can take up to 30 s on the free tier…
+            </p>
+          )}
         </form>
 
         <div className="my-6 flex items-center gap-4">
