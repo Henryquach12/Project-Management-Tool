@@ -13,27 +13,9 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>(null!)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const storedUser = localStorage.getItem('user')
-  const [user, setUser] = useState<User | null>(storedUser ? JSON.parse(storedUser) : null)
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'))
+  const [user, setUser] = useState<User | null>(null)
+  const [token, setToken] = useState<string | null>(null)
   const [isLoading] = useState(false)
-
-  // Background token validation — never blocks the UI
-  useEffect(() => {
-    const stored = localStorage.getItem('token')
-    if (!stored) return
-    authApi.me()
-      .then((res) => {
-        setUser(res.data)
-        localStorage.setItem('user', JSON.stringify(res.data))
-      })
-      .catch(() => {
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-        setToken(null)
-        setUser(null)
-      })
-  }, [])
 
   // Handle OAuth2 redirect: /oauth2/callback?token=xxx
   useEffect(() => {
@@ -50,13 +32,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = (t: string, u: User) => {
-    localStorage.setItem('token', t)
-    localStorage.setItem('user', JSON.stringify(u))
+    sessionStorage.setItem('token', t)
     setToken(t)
     setUser(u)
   }
 
   const logout = () => {
+    sessionStorage.removeItem('token')
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     setToken(null)
