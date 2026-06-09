@@ -1,5 +1,6 @@
 package com.projet_managment.backend.controller;
 
+import com.projet_managment.backend.dto.UpdateProfileRequest;
 import com.projet_managment.backend.dto.UserDto;
 import com.projet_managment.backend.model.User;
 import com.projet_managment.backend.security.UserPrincipal;
@@ -22,6 +23,14 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserDto> me(@AuthenticationPrincipal UserPrincipal principal) {
         User user = userService.getById(principal.getId());
+        return ResponseEntity.ok(UserDto.from(user));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserDto> updateProfile(
+            @RequestBody UpdateProfileRequest req,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        User user = userService.updateProfile(principal.getId(), req);
         return ResponseEntity.ok(UserDto.from(user));
     }
 

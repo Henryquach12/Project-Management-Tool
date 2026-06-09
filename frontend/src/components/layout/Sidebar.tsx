@@ -1,14 +1,14 @@
-import { Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, FolderKanban, LogOut, UserCircle } from 'lucide-react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { LayoutDashboard, FolderKanban, LogOut, Settings } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 
 export default function Sidebar() {
   const { user, logout } = useAuth()
   const location = useLocation()
+  const navigate = useNavigate()
 
   const links = [
     { to: '/dashboard', icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
-    { to: '/account',   icon: <UserCircle size={18} />,      label: 'My Account' },
   ]
 
   const initials = (user?.displayName || user?.username || '?')
@@ -50,13 +50,28 @@ export default function Sidebar() {
       {/* User footer */}
       <div className="border-t border-white/10 px-4 py-4">
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
-            {initials}
-          </div>
-          <div className="min-w-0">
+          {user?.photoUrl ? (
+            <img
+              src={user.photoUrl}
+              alt="avatar"
+              className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
+              {initials}
+            </div>
+          )}
+          <div className="min-w-0 flex-1">
             <p className="text-sm font-medium text-white truncate">{user?.displayName || user?.username}</p>
             <p className="text-xs text-slate-400 truncate">{user?.email}</p>
           </div>
+          <button
+            onClick={() => navigate('/account')}
+            title="Settings"
+            className="text-slate-400 hover:text-white transition flex-shrink-0"
+          >
+            <Settings size={16} />
+          </button>
         </div>
         <button
           onClick={logout}

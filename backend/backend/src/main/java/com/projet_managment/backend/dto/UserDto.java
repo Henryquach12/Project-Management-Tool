@@ -9,6 +9,10 @@ public class UserDto {
     private String username;
     private String email;
     private String displayName;
+    private String bio;
+    private String interests;
+    private String usualRole;
+    private String photoUrl;
 
     public static UserDto from(User user) {
         UserDto dto = new UserDto();
@@ -16,6 +20,10 @@ public class UserDto {
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         dto.setDisplayName(user.getDisplayName() != null ? user.getDisplayName() : user.getUsername());
+        dto.setBio(user.getBio());
+        dto.setInterests(user.getInterests());
+        dto.setUsualRole(user.getUsualRole());
+        dto.setPhotoUrl(user.getPhotoUrl());
         return dto;
     }
 }

@@ -1,5 +1,6 @@
 package com.projet_managment.backend.service.impl;
 
+import com.projet_managment.backend.dto.UpdateProfileRequest;
 import com.projet_managment.backend.model.User;
 import com.projet_managment.backend.repository.UserRepository;
 import com.projet_managment.backend.security.UserPrincipal;
@@ -39,5 +40,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> searchUsers(String query) {
         return userRepository.findByEmailContainingIgnoreCaseOrUsernameContainingIgnoreCase(query, query);
+    }
+
+    @Override
+    public User updateProfile(Long userId, UpdateProfileRequest req) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + userId));
+        if (req.getDisplayName() != null && !req.getDisplayName().isBlank())
+            user.setDisplayName(req.getDisplayName());
+        if (req.getBio() != null)       user.setBio(req.getBio());
+        if (req.getInterests() != null) user.setInterests(req.getInterests());
+        if (req.getUsualRole() != null) user.setUsualRole(req.getUsualRole());
+        if (req.getPhotoUrl() != null)  user.setPhotoUrl(req.getPhotoUrl());
+        return userRepository.save(user);
     }
 }

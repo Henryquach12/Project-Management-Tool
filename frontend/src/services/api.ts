@@ -30,6 +30,13 @@ export const authApi = {
 
 export const usersApi = {
   search: (q: string) => api.get('/users/search', { params: { q } }),
+  updateMe: (data: {
+    displayName?: string
+    bio?: string
+    interests?: string
+    usualRole?: string
+    photoUrl?: string
+  }) => api.put('/users/me', data),
 }
 
 export const projectsApi = {

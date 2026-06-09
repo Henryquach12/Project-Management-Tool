@@ -23,4 +23,16 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AuthProvider provider;
+
+    @Column(columnDefinition = "TEXT")
+    private String bio;
+
+    @Column(columnDefinition = "TEXT")
+    private String interests;
+
+    @Column(name = "usual_role")
+    private String usualRole;
+
+    @Column(name = "photo_url", columnDefinition = "TEXT")
+    private String photoUrl;
 }
