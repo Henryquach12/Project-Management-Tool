@@ -11,7 +11,7 @@ export interface AuthResponse {
 }
 
 export type ProjectRole = 'OWNER' | 'LEADER' | 'SUB_LEADER' | 'MEMBER'
-export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE'
+export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'IN_REVIEW' | 'DONE' | 'CANCELLED'
 
 export interface ProjectMember {
   userId: number
