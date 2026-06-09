@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
 import ProjectPage from './pages/ProjectPage'
+import AccountPage from './pages/AccountPage'
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
   const { user, isLoading } = useAuth()
@@ -19,6 +20,7 @@ export default function App() {
       <Route path="/oauth2/callback" element={<LoginPage />} />
       <Route path="/dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
       <Route path="/projects/:id" element={<PrivateRoute><ProjectPage /></PrivateRoute>} />
+      <Route path="/account" element={<PrivateRoute><AccountPage /></PrivateRoute>} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   )
