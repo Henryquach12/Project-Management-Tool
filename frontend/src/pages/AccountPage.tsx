@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { usersApi } from '../services/api'
 import Sidebar from '../components/layout/Sidebar'
-import { Camera, User, AtSign, Mail, Briefcase, FileText, Tag, Save, X, Pencil } from 'lucide-react'
+import { Camera, User, AtSign, Mail, Briefcase, FileText, Tag, Save, X, Pencil, Upload } from 'lucide-react'
 
 export default function AccountPage() {
   const { user, updateUser } = useAuth()
@@ -24,6 +24,24 @@ export default function AccountPage() {
   })
 
   const [photoPreview, setPhotoPreview] = useState(user?.photoUrl || '')
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 2 * 1024 * 1024) {
+      setError('Image must be under 2 MB')
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      const dataUrl = reader.result as string
+      setForm((f) => ({ ...f, photoUrl: dataUrl }))
+      setPhotoPreview(dataUrl)
+      setError(null)
+    }
+    reader.readAsDataURL(file)
+  }
 
   function startEdit() {
     setForm({
@@ -122,24 +140,45 @@ export default function AccountPage() {
             )}
           </div>
 
-          {/* Photo URL field (only in edit mode) */}
+          {/* Photo upload (only in edit mode) */}
           {editing && (
             <div className="mt-5 pt-5 border-t border-gray-100">
-              <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wider">
+              <label className="block text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider">
                 <Camera size={12} className="inline mr-1" />
-                Profile photo URL
+                Profile photo
               </label>
+              {/* File upload button */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-2 text-sm border border-dashed border-gray-300 hover:border-primary-400 hover:bg-primary-50 text-gray-600 hover:text-primary-600 px-4 py-2 rounded-lg transition w-full justify-center mb-3"
+              >
+                <Upload size={14} />
+                Upload from computer
+                <span className="text-xs text-gray-400 ml-1">(max 2 MB)</span>
+              </button>
+              {/* URL fallback */}
+              <p className="text-xs text-gray-400 text-center mb-2">or paste an image URL</p>
               <input
                 type="url"
-                value={form.photoUrl}
+                value={form.photoUrl.startsWith('data:') ? '' : form.photoUrl}
                 onChange={(e) => {
                   setForm({ ...form, photoUrl: e.target.value })
                   setPhotoPreview(e.target.value)
                 }}
-                placeholder="https://example.com/your-photo.jpg"
+                placeholder="https://example.com/photo.jpg"
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400"
               />
-              <p className="text-xs text-gray-400 mt-1">Paste a direct image URL. It will preview on the left.</p>
+              {form.photoUrl.startsWith('data:') && (
+                <p className="text-xs text-emerald-600 mt-1">File selected — preview shown on the left.</p>
+              )}
             </div>
           )}
         </div>
