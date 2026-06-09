@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -119,18 +120,18 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     private void assertMember(Project project, User user) {
-        boolean isMember = project.getOwner().getId().equals(user.getId()) ||
+        boolean isMember = Objects.equals(project.getOwner().getId(), user.getId()) ||
                 memberRepository.existsByProjectAndUser(project, user);
         if (!isMember) throw new AccessDeniedException("Not a project member");
     }
 
     private void assertOwner(Project project, User user) {
-        if (!project.getOwner().getId().equals(user.getId()))
+        if (!Objects.equals(project.getOwner().getId(), user.getId()))
             throw new AccessDeniedException("Only the project owner can perform this action");
     }
 
     private void assertOwnerOrLeader(Project project, User user) {
-        if (project.getOwner().getId().equals(user.getId())) return;
+        if (Objects.equals(project.getOwner().getId(), user.getId())) return;
         memberRepository.findByProjectAndUser(project, user)
                 .filter(m -> m.getRole() == ProjectRole.LEADER || m.getRole() == ProjectRole.OWNER)
                 .orElseThrow(() -> new AccessDeniedException("Only owners or leaders can manage members"));

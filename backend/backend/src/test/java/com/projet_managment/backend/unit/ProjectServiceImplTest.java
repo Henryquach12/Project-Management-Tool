@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,11 +35,19 @@ class ProjectServiceImplTest {
     private User stranger;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         projectService = new ProjectServiceImpl(projectRepository, memberRepository, userRepository);
 
         owner = User.builder().email("owner@test.com").provider(AuthProvider.LOCAL).build();
         stranger = User.builder().email("other@test.com").provider(AuthProvider.LOCAL).build();
+        setId(owner, 1L);
+        setId(stranger, 2L);
+    }
+
+    private static void setId(User user, Long id) throws Exception {
+        Field field = BaseEntity.class.getDeclaredField("id");
+        field.setAccessible(true);
+        field.set(user, id);
     }
 
     @Test
